@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.spacebox</groupId>
-    <artifactId>file-service</artifactId>
+    <artifactId>spacebox-file-service</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>file-service</name>
-    <description>Rest API for handle PandoraBox files.</description>
+    <name>spacebox-file-service</name>
+    <description>Rest API for handle SpaceBox files.</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -16,6 +16,17 @@
         <version>1.5.15.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <repositories>
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
