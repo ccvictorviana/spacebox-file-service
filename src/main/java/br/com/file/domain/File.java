@@ -26,10 +26,10 @@ public class File extends AEntity {
     @Column
     private String content;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private Long userId;
 
-    @Column
+    @Column(name = "file_parent_id")
     private Long fileParentId;
 
     @Column(nullable = false, updatable = false)
