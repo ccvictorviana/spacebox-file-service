@@ -39,8 +39,8 @@ security:
     token:
       secret-key: secret-key
       expire-length: 36000
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        type: trace
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
