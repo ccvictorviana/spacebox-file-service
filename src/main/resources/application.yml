@@ -4,7 +4,7 @@ server:
 # Config HEROKU
 spring:
   application:
-    name: auth-service
+    name: spacebox-file-service
   datasource:
     url: ${JDBC_DATABASE_URL}
     username: ${JDBC_DATABASE_USERNAME}
@@ -34,11 +34,7 @@ service:
 #service:
 #  auth:
 #    host: http://localhost:7531/
-security:
-  jwt:
-    token:
-      secret-key: secret-key
-      expire-length: 36000
+
 logging:
   level:
     org:
