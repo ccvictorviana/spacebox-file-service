@@ -27,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/files")
 @Api(tags = "files")
+@CrossOrigin
 public class FileController {
     @Autowired
     private FileService fileService;
