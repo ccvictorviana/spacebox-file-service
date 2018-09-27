@@ -15,6 +15,9 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<File, Long> {
     File findByIdAndUserId(Long id, Long userId);
 
+    @Query("SELECT f FROM File f WHERE f.id = ?1 AND f.userId = ?2 AND f.fileParentId IS NOT NULL")
+    File findFile(Long id, Long userId);
+
     File findByNameAndFileParentId(String name, Long fileParentId);
 
     @Query("SELECT new br.com.file.domain.view.FileView(f.id, f.name, f.type, f.size, f.fileParentId, f.created, f.updated) FROM File f " +

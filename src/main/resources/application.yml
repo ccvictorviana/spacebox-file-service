@@ -34,9 +34,8 @@ service:
 #service:
 #  auth:
 #    host: http://localhost:7531/
-
-logging:
-  level:
-    org:
-      hibernate:
-        type: trace
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type: trace

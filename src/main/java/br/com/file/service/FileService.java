@@ -18,5 +18,7 @@ public interface FileService {
 
     File detail(UserDetailsAuth userDetailsAuth, Long fileId);
 
+    File findFile(UserDetailsAuth userDetailsAuth, Long fileId);
+
     void rename(UserDetailsAuth userDetailsAuth, Long fileId, String name);
 }

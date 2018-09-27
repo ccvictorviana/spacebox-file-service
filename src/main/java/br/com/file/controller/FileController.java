@@ -27,7 +27,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/files")
 @Api(tags = "files")
-@CrossOrigin
 public class FileController {
     @Autowired
     private FileService fileService;
@@ -106,7 +105,7 @@ public class FileController {
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")
     })
     public ResponseEntity<Resource> download(PrincipalToken token, Long fileId) {
-        File fileData = fileService.detail(token.getUserDetailsAuth(), fileId);
+        File fileData = fileService.findFile(token.getUserDetailsAuth(), fileId);
         ByteArrayResource resource = new ByteArrayResource(Base64.decodeBase64(fileData.getContent()));
 
         return ResponseEntity.ok()

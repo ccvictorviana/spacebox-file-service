@@ -59,6 +59,7 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
     @Override
     public void delete(UserDetailsAuth userDetailsAuth, Long fileId) {
         File file = repository.findByIdAndUserId(fileId, userDetailsAuth.getId());
+
         if (file == null)
             throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
 
@@ -69,6 +70,17 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
     @Override
     public File detail(UserDetailsAuth userDetailsAuth, Long fileId) {
         File file = repository.findByIdAndUserId(fileId, userDetailsAuth.getId());
+
+        if (file == null)
+            throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
+
+        return file;
+    }
+
+    @Override
+    public File findFile(UserDetailsAuth userDetailsAuth, Long fileId) {
+        File file = repository.findFile(fileId, userDetailsAuth.getId());
+
         if (file == null)
             throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
 
