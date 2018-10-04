@@ -36,14 +36,18 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                 "FROM tb_notification n " +
                 "LEFT JOIN tb_file f ON n.file_id = f.id " +
                 "WHERE " +
-                " n.user_owner_id = :userId AND " +
-                " (:created IS NULL OR n.created > :created) AND " +
-                " (:fileParentId = 0 OR f.file_parent_id = :fileParentId) " +
+                " n.user_owner_id = :userId " +
+                ((beginUpdateDate == null) ? " " : " AND (n.created > :created) ") +
+                ((fileParentId == null) ? " " : " AND (f.file_parent_id = :fileParentId) ") +
                 "ORDER BY n.created DESC");
 
-        query.setParameter("userId", userId)
-                .setParameter("fileParentId", (fileParentId == null) ? new Long(0) : fileParentId)
-                .setParameter("created", beginUpdateDate, TemporalType.TIMESTAMP);
+        query.setParameter("userId", userId);
+
+        if (fileParentId != null)
+            query.setParameter("fileParentId", fileParentId);
+
+        if (beginUpdateDate != null)
+            query.setParameter("created", beginUpdateDate, TemporalType.TIMESTAMP);
 
         List<NotificationView> result = new ArrayList<>();
         List<Object[]> resultsGeneric = query.getResultList();

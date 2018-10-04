@@ -5,8 +5,8 @@ server:
 spring:
   http:
     multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
+      max-file-size: 5MB
+      max-request-size: 5MB
   application:
     name: spacebox-file-service
   datasource:
@@ -16,7 +16,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
         format_sql: true
 service:
