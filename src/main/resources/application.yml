@@ -17,9 +17,16 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-#service:
-#  auth:
-#    host: https://spacebox-auth-service.herokuapp.com/
+        show_sql: true
+        format_sql: true
+service:
+  auth:
+    host: https://spacebox-auth-service.herokuapp.com/
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace
 
 # Config DEV
 #spring:
@@ -41,11 +48,11 @@ spring:
 #        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 #        show_sql: true
 #        format_sql: true
-service:
-  auth:
-    host: http://localhost:7531/
-logging:
-  level:
-    org:
-      hibernate:
-        type: trace
+#service:
+#  auth:
+#    host: http://localhost:7531/
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type: trace
