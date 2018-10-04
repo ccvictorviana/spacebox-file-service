@@ -15,14 +15,22 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<File, Long> {
     File findByIdAndUserId(Long id, Long userId);
 
-    @Query("SELECT f FROM File f WHERE f.id = ?1 AND f.userId = ?2 AND f.fileParentId IS NOT NULL")
+    @Query("SELECT f FROM File f WHERE f.id = ?1")
+    File findFile(Long id);
+
+    @Query("SELECT f FROM File f WHERE f.id = ?1 AND f.userId = ?2 AND f.fileParentId IS NULL")
     File findFile(Long id, Long userId);
 
     File findByNameAndFileParentId(String name, Long fileParentId);
 
     @Query("SELECT new br.com.file.domain.view.FileView(f.id, f.name, f.type, f.size, f.fileParentId, f.created, f.updated) FROM File f " +
-            "WHERE f.userId = ?1 AND (?2 IS NULL OR f.updated > ?2) AND ((?3 IS NULL AND f.fileParentId IS NULL) OR f.fileParentId = ?3) ORDER BY f.type, f.name")
+            "WHERE (?1 IS NULL OR f.userId = ?1) AND (?2 IS NULL OR f.updated > ?2) AND ((?3 IS NULL AND f.fileParentId IS NULL) OR f.fileParentId = ?3) ORDER BY f.type, f.name")
     List<FileView> list(Long userId, Date beginUpdateDate, Long fileParentId);
+
+    @Query("SELECT new br.com.file.domain.view.FileView(f.id, f.name, f.type, f.size, f.fileParentId, f.created, f.updated) FROM FileShare fs " +
+            " JOIN fs.file f " +
+            "WHERE fs.userId = ?1 AND (?2 IS NULL OR f.updated > ?2) AND ((?3 IS NULL AND f.fileParentId IS NULL) OR f.fileParentId = ?3) ORDER BY f.type, f.name")
+    List<FileView> listFoldersShared(Long userId, Date beginUpdateDate, Long fileParentId);
 
     @Modifying
     @Transactional

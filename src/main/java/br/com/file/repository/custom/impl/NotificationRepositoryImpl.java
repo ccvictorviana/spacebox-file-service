@@ -22,7 +22,8 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                 " n.id as nId," +
                 " n.type as nType," +
                 " n.file_name," +
-                " n.user_id as nUserId," +
+                " n.user_owner_id as userOwnerId," +
+                " n.user_action_id as userActionId," +
                 " n.created as nCreated," +
                 " f.id as fId," +
                 " f.name as fName," +
@@ -34,7 +35,7 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                 "FROM tb_notification n " +
                 "LEFT JOIN tb_file f ON n.file_id = f.id " +
                 "WHERE " +
-                " n.user_id = :userId AND " +
+                " n.user_owner_id = :userId AND " +
                 " (:created IS NULL OR n.created > :created) AND " +
                 " (:fileParentId IS NULL OR f.file_parent_id = :fileParentId) " +
                 "ORDER BY n.created DESC");
@@ -53,15 +54,16 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                         .withNId(ParseUtils.parseLong(entity[0]))
                         .withNType(ParseUtils.parseInteger(entity[1]))
                         .withNFileName(ParseUtils.parseString(entity[2]))
-                        .withNUserId(ParseUtils.parseLong(entity[3]))
-                        .withNCreated(ParseUtils.parseDate(entity[4]))
-                        .withFileId(ParseUtils.parseLong(entity[5]))
-                        .withFName(ParseUtils.parseString(entity[6]))
-                        .withFType(ParseUtils.parseString(entity[7]))
-                        .withFSize(ParseUtils.parseLong(entity[8]))
-                        .withFileParentId(ParseUtils.parseLong(entity[9]))
-                        .withFCreated(ParseUtils.parseDate(entity[10]))
-                        .withFUpdated(ParseUtils.parseDate(entity[11]))
+                        .withUserOwnerId(ParseUtils.parseLong(entity[3]))
+                        .withUserActionId(ParseUtils.parseLong(entity[4]))
+                        .withNCreated(ParseUtils.parseDate(entity[5]))
+                        .withFileId(ParseUtils.parseLong(entity[6]))
+                        .withFName(ParseUtils.parseString(entity[7]))
+                        .withFType(ParseUtils.parseString(entity[8]))
+                        .withFSize(ParseUtils.parseLong(entity[9]))
+                        .withFileParentId(ParseUtils.parseLong(entity[10]))
+                        .withFCreated(ParseUtils.parseDate(entity[11]))
+                        .withFUpdated(ParseUtils.parseDate(entity[12]))
                         .build());
             }
         }

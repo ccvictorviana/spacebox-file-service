@@ -3,6 +3,10 @@ server:
 
 # Config HEROKU
 spring:
+  http:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
   application:
     name: spacebox-file-service
   datasource:
@@ -13,12 +17,16 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-service:
-  auth:
-    host: https://spacebox-auth-service.herokuapp.com/
+#service:
+#  auth:
+#    host: https://spacebox-auth-service.herokuapp.com/
 
 # Config DEV
 #spring:
+#  http:
+#    multipart:
+#      max-file-size: 500MB
+#      max-request-size: 500MB
 #  application:
 #    name: auth-service
 #  datasource:
@@ -26,16 +34,18 @@ service:
 #    username: root
 #    password: 123456789
 #  jpa:
+#    hibernate:
+#      ddl-auto: create
 #    properties:
 #      hibernate:
 #        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 #        show_sql: true
 #        format_sql: true
-#service:
-#  auth:
-#    host: http://localhost:7531/
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        type: trace
+service:
+  auth:
+    host: http://localhost:7531/
+logging:
+  level:
+    org:
+      hibernate:
+        type: trace

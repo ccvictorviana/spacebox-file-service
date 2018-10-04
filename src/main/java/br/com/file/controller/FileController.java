@@ -21,7 +21,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -44,6 +46,24 @@ public class FileController {
     public FileSummaryResponse create(PrincipalToken token, @ApiParam("File") @RequestBody FileRequest request) {
         return modelMapper.map(fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class)), FileSummaryResponse.class);
     }
+
+    @PostMapping("/upload")
+    public FileSummaryResponse upload(PrincipalToken token, @RequestParam("file") MultipartFile fileUp) {
+        FileRequest request = new FileRequest();
+
+        try {
+            request.setContent(Base64.encodeBase64String(fileUp.getBytes()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        request.setSize(fileUp.getSize());
+        request.setType(fileUp.getContentType());
+        request.setName(fileUp.getOriginalFilename());
+        File file = fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class));
+        return modelMapper.map(file, FileSummaryResponse.class);
+    }
+
 
     @DeleteMapping(value = "/")
     @ApiOperation(value = "Delete file")
@@ -105,7 +125,7 @@ public class FileController {
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")
     })
     public ResponseEntity<Resource> download(PrincipalToken token, Long fileId) {
-        File fileData = fileService.findFile(token.getUserDetailsAuth(), fileId);
+        File fileData = fileService.detail(token.getUserDetailsAuth(), fileId);
         ByteArrayResource resource = new ByteArrayResource(Base64.decodeBase64(fileData.getContent()));
 
         return ResponseEntity.ok()

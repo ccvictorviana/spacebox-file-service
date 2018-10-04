@@ -1,5 +1,7 @@
 package br.com.file.domain;
 
+import br.com.file.domain.enums.ENotificationType;
+import br.com.file.repository.converter.ENotificationTypeConverter;
 import br.com.spacebox.common.domain.AEntity;
 
 import javax.persistence.*;
@@ -10,7 +12,8 @@ import java.util.Date;
 public class Notification extends AEntity {
 
     @Column(nullable = false)
-    private int type;
+    @Convert(converter = ENotificationTypeConverter.class)
+    private ENotificationType type;
 
     @Column(nullable = false)
     private String fileName;
@@ -18,21 +21,24 @@ public class Notification extends AEntity {
     @Column(nullable = false)
     private Long fileId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "long", name = "fileId", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "none"))
-    private File file;
+    @Column(nullable = false)
+    private Long userOwnerId;
 
     @Column(nullable = false)
-    private Long userId;
+    private Long userActionId;
 
     @Column(nullable = false)
     private Date created;
 
-    public int getType() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(columnDefinition = "long", name = "fileId", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "none"))
+    private File file;
+
+    public ENotificationType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(ENotificationType type) {
         this.type = type;
     }
 
@@ -42,14 +48,6 @@ public class Notification extends AEntity {
 
     public void setFileId(Long fileId) {
         this.fileId = fileId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public Date getCreated() {
@@ -74,5 +72,21 @@ public class Notification extends AEntity {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public Long getUserOwnerId() {
+        return userOwnerId;
+    }
+
+    public void setUserOwnerId(Long userOwnerId) {
+        this.userOwnerId = userOwnerId;
+    }
+
+    public Long getUserActionId() {
+        return userActionId;
+    }
+
+    public void setUserActionId(Long userActionId) {
+        this.userActionId = userActionId;
     }
 }

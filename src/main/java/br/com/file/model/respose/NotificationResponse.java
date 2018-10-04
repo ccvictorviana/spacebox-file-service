@@ -18,12 +18,15 @@ public class NotificationResponse {
     private Long nFileId;
 
     @ApiModelProperty(position = 4)
-    private Long userId;
+    private Long userOwnerId;
 
     @ApiModelProperty(position = 5)
-    private Date created;
+    private Long userActionId;
 
     @ApiModelProperty(position = 6)
+    private Date created;
+
+    @ApiModelProperty(position = 7)
     private FileSummaryResponse file;
 
     public Long getId() {
@@ -58,12 +61,20 @@ public class NotificationResponse {
         this.nFileId = nFileId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getUserOwnerId() {
+        return userOwnerId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserOwnerId(Long userOwnerId) {
+        this.userOwnerId = userOwnerId;
+    }
+
+    public Long getUserActionId() {
+        return userActionId;
+    }
+
+    public void setUserActionId(Long userActionId) {
+        this.userActionId = userActionId;
     }
 
     public Date getCreated() {

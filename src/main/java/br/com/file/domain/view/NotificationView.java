@@ -1,31 +1,28 @@
 package br.com.file.domain.view;
 
+import br.com.file.domain.enums.ENotificationType;
+
 import java.util.Date;
 
 public class NotificationView {
-
     private Long id;
-
-    private int type;
-
+    private ENotificationType type;
     private String nFileName;
-
     private Long nFileId;
-
-    private Long userId;
-
+    private Long userActionId;
+    private Long userOwnerId;
     private Date created;
-
     private FileView file;
 
-    public NotificationView(Long id, int type, String fileName, Long userId, Date created,
+    public NotificationView(Long id, int type, String fileName, Long userOwnerId, Long userActionId, Date created,
                             Long fileId, String name, String fileType, Long size, Long fileParentId, Date fileCreated, Date updated) {
-        this.id = id;
-        this.type = type;
-        this.nFileName = fileName;
-        this.nFileId = fileId;
-        this.userId = userId;
-        this.created = created;
+        setId(id);
+        setType(type);
+        setnFileId(fileId);
+        setnFileName(fileName);
+        setUserOwnerId(userOwnerId);
+        setUserActionId(userActionId);
+        setCreated(created);
         file = new FileView(fileId, name, fileType, size, fileParentId, fileCreated, updated);
     }
 
@@ -37,12 +34,28 @@ public class NotificationView {
         this.id = id;
     }
 
-    public int getType() {
+    public ENotificationType getType() {
         return type;
     }
 
     public void setType(int type) {
-        this.type = type;
+        this.type = ENotificationType.toEnum(type);
+    }
+
+    public Long getUserActionId() {
+        return userActionId;
+    }
+
+    public void setUserActionId(Long userActionId) {
+        this.userActionId = userActionId;
+    }
+
+    public Long getUserOwnerId() {
+        return userOwnerId;
+    }
+
+    public void setUserOwnerId(Long userOwnerId) {
+        this.userOwnerId = userOwnerId;
     }
 
     public String getnFileName() {
@@ -59,14 +72,6 @@ public class NotificationView {
 
     public void setnFileId(Long nFileId) {
         this.nFileId = nFileId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public Date getCreated() {
@@ -89,7 +94,8 @@ public class NotificationView {
         private Long nId;
         private int nType;
         private String nFileName;
-        private Long nUserId;
+        private Long userOwnerId;
+        private Long userActionId;
         private Date nCreated;
         private Long fileId;
         private String fName;
@@ -118,8 +124,13 @@ public class NotificationView {
             return this;
         }
 
-        public Builder withNUserId(Long nUserId) {
-            this.nUserId = nUserId;
+        public Builder withUserOwnerId(Long userOwnerId) {
+            this.userOwnerId = userOwnerId;
+            return this;
+        }
+
+        public Builder withUserActionId(Long userActionId) {
+            this.userActionId = userActionId;
             return this;
         }
 
@@ -164,8 +175,7 @@ public class NotificationView {
         }
 
         public NotificationView build() {
-            return new NotificationView(
-                    nId, nType, nFileName, nUserId, nCreated,
+            return new NotificationView(nId, nType, nFileName, userOwnerId, userActionId, nCreated,
                     fileId, fName, fType, fSize, fileParentId, fCreated, fUpdated);
         }
     }
