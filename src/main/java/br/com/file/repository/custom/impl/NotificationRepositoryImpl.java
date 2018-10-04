@@ -7,6 +7,7 @@ import br.com.file.utils.ParseUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,7 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
 
         query.setParameter("userId", userId);
         query.setParameter("fileParentId", fileParentId);
-        query.setParameter("created", beginUpdateDate);
+        query.setParameter("created", beginUpdateDate, TemporalType.TIMESTAMP);
 
         List<NotificationView> result = new ArrayList<>();
         List<Object[]> resultsGeneric = query.getResultList();
