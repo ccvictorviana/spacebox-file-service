@@ -22,11 +22,6 @@ spring:
 service:
   auth:
     host: https://spacebox-auth-service.herokuapp.com/
-logging:
-  level:
-    org:
-      hibernate:
-        type: trace
 
 # Config DEV
 #spring:
