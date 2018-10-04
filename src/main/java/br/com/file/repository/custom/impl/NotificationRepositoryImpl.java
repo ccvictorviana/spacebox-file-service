@@ -38,12 +38,12 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                 "WHERE " +
                 " n.user_owner_id = :userId AND " +
                 " (:created IS NULL OR n.created > :created) AND " +
-                " (:fileParentId IS NULL OR f.file_parent_id = :fileParentId) " +
+                " (:fileParentId = 0 OR f.file_parent_id = :fileParentId) " +
                 "ORDER BY n.created DESC");
 
-        query.setParameter("userId", userId);
-        query.setParameter("fileParentId", fileParentId);
-        query.setParameter("created", beginUpdateDate, TemporalType.TIMESTAMP);
+        query.setParameter("userId", userId)
+                .setParameter("fileParentId", (fileParentId == null) ? new Long(0) : fileParentId)
+                .setParameter("created", beginUpdateDate, TemporalType.TIMESTAMP);
 
         List<NotificationView> result = new ArrayList<>();
         List<Object[]> resultsGeneric = query.getResultList();
