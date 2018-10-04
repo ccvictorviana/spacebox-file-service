@@ -36,7 +36,7 @@ public class FileRepositoryImpl implements FileCustomRepository {
         if (beginUpdateDate != null)
             builder.append(" AND ( f.updated > :updated ) ");
 
-        builder.append(" ORDER BY f.type, f.name ");
+        builder.append(" ORDER BY f.type desc, f.name ");
 
         TypedQuery<FileView> query = em.createQuery(builder.toString(), FileView.class)
                 .setParameter("userId", userId)
