@@ -8,6 +8,7 @@ import br.com.file.domain.filter.FileFilter;
 import br.com.file.domain.view.FileView;
 import br.com.file.repository.FileRepository;
 import br.com.file.repository.FileShareRepository;
+import br.com.file.service.AmazonS3Services;
 import br.com.file.service.FileService;
 import br.com.file.service.NotificationService;
 import br.com.spacebox.common.exceptions.BusinessException;
@@ -36,9 +37,12 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private AmazonS3Services amazonS3Services;
+
     @Transactional
     @Override
-    public File create(UserDetailsAuth userDetailsAuth, File file) {
+    public File create(UserDetailsAuth userDetailsAuth, File file, byte[] content) {
         File fileParent = null;
         boolean folderShared = false;
 
@@ -47,8 +51,15 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
             folderShared = fileParent.getUserId() != userDetailsAuth.getId();
         }
 
+        if (content != null)
+            file.setFileKeyS3("");
+
         file.setUserId((fileParent != null) ? fileParent.getUserId() : userDetailsAuth.getId());
         validate(ValidationType.CREATE, file);
+
+        if (content != null)
+            file.setFileKeyS3(amazonS3Services.uploadFile(content, file.getType()));
+
         repository.save(file);
 
         if (folderShared)
@@ -151,6 +162,10 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
 
         FluentValidationString.notNullAndEmpty().test(file.getName()).addMessage(getMessage(EMessage.REQUIRED_FIELD_NAME), errors);
 
+        if (file.getFileKeyS3() == null && file.getType() != null) {
+            errors.add(getMessage(EMessage.REQUIRED_FIELD_CONTENT));
+        }
+
         if (file.getFileParentId() != null) {
             fileDB = repository.findByIdAndUserId(file.getFileParentId(), file.getUserId());
             if (fileDB == null) {
@@ -165,7 +180,7 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
         }
 
         if (file.getName() != null) {
-            fileDB = repository.findByNameAndFileParentId(file.getName(), file.getFileParentId());
+            fileDB = repository.findByNameAndFileParentIdAndUserId(file.getName(), file.getFileParentId(), file.getUserId());
             if (fileDB != null && !fileDB.getId().equals(file.getId())) {
                 errors.add(getMessage(EMessage.ALREADYEXISTS_NAME));
             }

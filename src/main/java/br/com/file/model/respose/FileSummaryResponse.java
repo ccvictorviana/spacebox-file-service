@@ -27,6 +27,9 @@ public class FileSummaryResponse {
     @ApiModelProperty(position = 7)
     private Date created;
 
+    @ApiModelProperty(position = 7)
+    private boolean owner;
+
     public Long getId() {
         return id;
     }
@@ -81,5 +84,13 @@ public class FileSummaryResponse {
 
     public void setFileParentId(Long fileParentId) {
         this.fileParentId = fileParentId;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
     }
 }

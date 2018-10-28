@@ -17,11 +17,10 @@ public class FileShare extends AEntity {
     private File file;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "long", name = "fileId", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "none"))
+    @JoinColumn(columnDefinition = "long", name = "userId", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "none"))
     private User user;
 
     public FileShare() {
-
     }
 
     public FileShare(Long fileId, Long userId) {
@@ -51,5 +50,21 @@ public class FileShare extends AEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

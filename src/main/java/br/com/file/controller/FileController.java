@@ -6,14 +6,16 @@ import br.com.file.domain.view.FileView;
 import br.com.file.model.request.FileFilterRequest;
 import br.com.file.model.request.FileRenameRequest;
 import br.com.file.model.request.FileRequest;
+import br.com.file.model.request.FileUploadRequest;
 import br.com.file.model.respose.FileSummaryResponse;
 import br.com.file.model.respose.FilesResponse;
+import br.com.file.service.AmazonS3Services;
 import br.com.file.service.FileService;
 import br.com.spacebox.common.model.response.UserResponse;
 import br.com.spacebox.common.service.security.PrincipalToken;
 import io.swagger.annotations.*;
-import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
+import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -34,6 +36,9 @@ public class FileController {
     private FileService fileService;
 
     @Autowired
+    private AmazonS3Services amazonS3Services;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @PostMapping("/")
@@ -44,26 +49,33 @@ public class FileController {
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")
     })
     public FileSummaryResponse create(PrincipalToken token, @ApiParam("File") @RequestBody FileRequest request) {
-        return modelMapper.map(fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class)), FileSummaryResponse.class);
+        File file = modelMapper.map(request, File.class);
+        byte[] content = (request.getContent() == null) ? null : Base64.decode(request.getContent());
+        return modelMapper.map(fileService.create(token.getUserDetailsAuth(), file, content), FileSummaryResponse.class);
     }
 
     @PostMapping("/upload")
-    public FileSummaryResponse upload(PrincipalToken token, @RequestParam("file") MultipartFile fileUp) {
+    public FileSummaryResponse upload(PrincipalToken token, @RequestParam("file") MultipartFile fileUp,
+                                      @RequestParam("fileParentId") String fileParentId) throws IOException {
         FileRequest request = new FileRequest();
-
-        try {
-            request.setContent(Base64.encodeBase64String(fileUp.getBytes()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         request.setSize(fileUp.getSize());
         request.setType(fileUp.getContentType());
         request.setName(fileUp.getOriginalFilename());
-        File file = fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class));
+        request.setFileParentId((!fileParentId.equalsIgnoreCase("null")) ? Long.parseLong(fileParentId) : null);
+        File file = fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class), fileUp.getBytes());
         return modelMapper.map(file, FileSummaryResponse.class);
     }
 
+    @PostMapping("/uploadBase64")
+    public FileSummaryResponse uploadBase64(PrincipalToken token, @RequestBody FileUploadRequest fileUp) {
+        FileRequest request = new FileRequest();
+        byte[] file = Base64.decode(fileUp.getFile());
+        request.setSize(Long.parseLong(file.length + ""));
+        request.setType(fileUp.getType());
+        request.setName(fileUp.getName());
+        File fileR = fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class), file);
+        return modelMapper.map(fileR, FileSummaryResponse.class);
+    }
 
     @DeleteMapping(value = "/")
     @ApiOperation(value = "Delete file")
@@ -126,7 +138,7 @@ public class FileController {
     })
     public ResponseEntity<Resource> download(PrincipalToken token, Long fileId) {
         File fileData = fileService.detail(token.getUserDetailsAuth(), fileId);
-        ByteArrayResource resource = new ByteArrayResource(Base64.decodeBase64(fileData.getContent()));
+        ByteArrayResource resource = amazonS3Services.downloadFile(fileData.getFileKeyS3());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileData.getName())

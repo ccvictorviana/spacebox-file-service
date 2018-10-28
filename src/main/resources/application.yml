@@ -14,6 +14,8 @@ spring:
     username: ${JDBC_DATABASE_USERNAME}
     password: ${JDBC_DATABASE_PASSWORD}
   jpa:
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -22,6 +24,12 @@ spring:
 service:
   auth:
     host: https://spacebox-auth-service.herokuapp.com/
+amazon:
+  aws:
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    region: ${AWS_REGION}
+    bucket: ${AWS_BUCKET}
 logging:
   level:
     org:
@@ -41,13 +49,19 @@ logging:
 #    username: root
 #    password: 123456789
 #  jpa:
-#    hibernate:
-#      ddl-auto: create
+##    hibernate:
+##      ddl-auto: create
 #    properties:
 #      hibernate:
 #        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 #        show_sql: true
 #        format_sql: true
+#amazon:
+#  aws:
+#    access_key_id: ${AWS_ACCESS_KEY_ID}
+#    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+#    region: ${AWS_REGION}
+#    bucket: ${AWS_BUCKET}
 #service:
 #  auth:
 #    host: http://localhost:7531/

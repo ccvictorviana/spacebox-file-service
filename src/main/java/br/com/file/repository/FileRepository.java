@@ -19,7 +19,7 @@ public interface FileRepository extends JpaRepository<File, Long>, FileCustomRep
     @Query("SELECT f FROM File f WHERE f.id = ?1 AND f.userId = ?2 AND f.fileParentId IS NULL")
     File findFile(Long id, Long userId);
 
-    File findByNameAndFileParentId(String name, Long fileParentId);
+    File findByNameAndFileParentIdAndUserId(String name, Long fileParentId, Long userId);
 
     @Modifying
     @Transactional

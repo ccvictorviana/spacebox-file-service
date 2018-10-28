@@ -1,29 +1,28 @@
 package br.com.file.domain.view;
 
 public class UserShareView {
+    private Long id;
+    private String userName;
 
-    private Long userId;
-    private String name;
-
-    public UserShareView(Long userId, String name) {
-        this.userId = userId;
-        this.name = name;
+    public UserShareView(Long id, String userName) {
+        this.id = id;
+        this.userName = userName;
     }
 
-    public Long getUserId(Long userId) {
-        return this.userId;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

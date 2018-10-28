@@ -23,7 +23,7 @@ public class NotificationView {
         setUserOwnerId(userOwnerId);
         setUserActionId(userActionId);
         setCreated(created);
-        file = new FileView(fileId, name, fileType, size, fileParentId, fileCreated, updated);
+        file = new FileView(fileId, name, fileType, size, fileParentId, fileCreated, updated, false);
     }
 
     public Long getId() {

@@ -8,7 +8,7 @@ import br.com.spacebox.common.service.security.UserDetailsAuth;
 import java.util.List;
 
 public interface FileService {
-    File create(UserDetailsAuth userDetailsAuth, File file);
+    File create(UserDetailsAuth userDetailsAuth, File file, byte[] content);
 
     void update(UserDetailsAuth userDetailsAuth, File file);
 

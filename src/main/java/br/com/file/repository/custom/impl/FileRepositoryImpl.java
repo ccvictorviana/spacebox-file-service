@@ -26,7 +26,7 @@ public class FileRepositoryImpl implements FileCustomRepository {
 
     private List<FileView> getFiles(String from, String where, Long userId, Date beginUpdateDate, Long fileParentId) {
         StringBuilder builder = new StringBuilder();
-        builder.append(" SELECT new br.com.file.domain.view.FileView(f.id, f.name, f.type, f.size, f.fileParentId, f.created, f.updated) ");
+        builder.append(" SELECT new br.com.file.domain.view.FileView(f.id, f.name, f.type, f.size, f.fileParentId, f.created, f.updated, CASE WHEN (f.userId = :userId) THEN true ELSE false  END) ");
         builder.append(" FROM ");
         builder.append(from);
         builder.append(" WHERE ");

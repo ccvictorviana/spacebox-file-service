@@ -22,9 +22,8 @@ public class File extends AEntity {
     @Column
     private Long size;
 
-    @Lob
     @Column
-    private String content;
+    private String fileKeyS3;
 
     @Column(nullable = false)
     private Long userId;
@@ -66,12 +65,12 @@ public class File extends AEntity {
         this.size = size;
     }
 
-    public String getContent() {
-        return content;
+    public String getFileKeyS3() {
+        return fileKeyS3;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setFileKeyS3(String fileKeyS3) {
+        this.fileKeyS3 = fileKeyS3;
     }
 
     public Long getUserId() {

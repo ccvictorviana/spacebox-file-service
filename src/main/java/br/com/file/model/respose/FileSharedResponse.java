@@ -4,7 +4,13 @@ public class FileSharedResponse {
     private Long id;
     private String userName;
     private Long userId;
-    
+
+    public FileSharedResponse(Long id, String userName, Long userId) {
+        this.id = id;
+        this.userName = userName;
+        this.userId = userId;
+    }
+
     public Long getId() {
         return id;
     }

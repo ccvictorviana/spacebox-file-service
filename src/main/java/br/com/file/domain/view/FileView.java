@@ -11,8 +11,9 @@ public class FileView extends AEntity {
     private Long fileParentId;
     private Date created;
     private Date updated;
+    private boolean owner;
 
-    public FileView(Long id, String name, String type, Long size, Long fileParentId, Date created, Date updated) {
+    public FileView(Long id, String name, String type, Long size, Long fileParentId, Date created, Date updated, boolean owner) {
         setId(id);
         this.name = name;
         this.type = type;
@@ -20,6 +21,7 @@ public class FileView extends AEntity {
         this.fileParentId = fileParentId;
         this.created = created;
         this.updated = updated;
+        this.owner = owner;
     }
 
     public String getName() {
@@ -68,5 +70,13 @@ public class FileView extends AEntity {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
     }
 }

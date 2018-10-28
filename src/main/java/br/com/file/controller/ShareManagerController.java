@@ -1,5 +1,6 @@
 package br.com.file.controller;
 
+import br.com.file.domain.FileShare;
 import br.com.file.model.request.ShareRequest;
 import br.com.file.model.respose.FileSharedResponse;
 import br.com.file.service.ShareManagerService;
@@ -9,6 +10,8 @@ import io.swagger.annotations.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/share")
@@ -43,7 +46,7 @@ public class ShareManagerController {
         service.share(token.getUserDetailsAuth(), request.getFileId(), request.getUserId());
     }
 
-    @DeleteMapping("/")
+    @PostMapping("/unshare")
     @ApiOperation(value = "Unshare file with users.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Something went wrong"),
@@ -62,7 +65,16 @@ public class ShareManagerController {
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")
     })
     public FileSharedResponse[] list(PrincipalToken token, @ApiParam("FileId") Long fileId) {
-        return modelMapper.map(service.list(token.getUserDetailsAuth(), fileId), FileSharedResponse[].class);
-    }
+        List<FileShare> sharedList = service.list(token.getUserDetailsAuth(), fileId);
+        FileSharedResponse[] result = new FileSharedResponse[sharedList.size()];
 
+        if (sharedList.size() > 0) {
+            int index = 0;
+            for (FileShare fileShare : sharedList) {
+                result[index++] = new FileSharedResponse(fileShare.getId(), fileShare.getUser().getUsername(), fileShare.getUserId());
+            }
+        }
+
+        return result;
+    }
 }

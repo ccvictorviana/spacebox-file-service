@@ -50,11 +50,15 @@ public class ShareManagerServiceImpl extends AEntityService<FileShare> implement
     public void share(UserDetailsAuth userDetailsAuth, Long fileId, Long userId) {
         File file = repository.findByIdAndUserId(fileId, userDetailsAuth.getId());
 
-        if (userId != null) {
-            fileShareRepository.save(new FileShare(fileId, userId));
-            generateNotification(ENotificationType.SHARE_WITH, file, userId);
-            generateNotification(ENotificationType.SHARE, file);
-        }
+        if (file == null)
+            throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
+
+        if (userId == null)
+            throw new BusinessException(getMessage(EMessage.USER_NOT_FOUND));
+
+        fileShareRepository.save(new FileShare(fileId, userId));
+        generateNotification(ENotificationType.SHARE_WITH, file, userId);
+        generateNotification(ENotificationType.SHARE, file);
     }
 
     @Override
