@@ -36,6 +36,7 @@ public class AmazonS3ServiceImpl implements AmazonS3Services {
             System.out.println("Downloading an object");
             S3Object s3object = s3client.getObject(new GetObjectRequest(bucketName, keyName));
             result = new ByteArrayResource(IOUtils.toByteArray(s3object.getObjectContent()));
+            logger.info("===================== Download File - Done! =====================");
         } catch (AmazonServiceException ase) {
             logger.info("Caught an AmazonServiceException from GET requests, rejected reasons:");
             logger.info("Error Message:    " + ase.getMessage());
@@ -77,5 +78,23 @@ public class AmazonS3ServiceImpl implements AmazonS3Services {
         }
 
         return fileKey;
+    }
+
+    @Override
+    public void deleteFile(String keyName) {
+        try {
+            s3client.deleteObject(bucketName, keyName);
+            logger.info("===================== Delete File - Done! =====================");
+        } catch (AmazonServiceException ase) {
+            logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
+            logger.info("Error Message:    " + ase.getMessage());
+            logger.info("HTTP Status Code: " + ase.getStatusCode());
+            logger.info("AWS Error Code:   " + ase.getErrorCode());
+            logger.info("Error Type:       " + ase.getErrorType());
+            logger.info("Request ID:       " + ase.getRequestId());
+        } catch (AmazonClientException ace) {
+            logger.info("Caught an AmazonClientException: ");
+            logger.info("Error Message: " + ace.getMessage());
+        }
     }
 }

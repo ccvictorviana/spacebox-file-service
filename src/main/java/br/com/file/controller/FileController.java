@@ -51,7 +51,7 @@ public class FileController {
     public FileSummaryResponse create(PrincipalToken token, @ApiParam("File") @RequestBody FileRequest request) {
         File file = modelMapper.map(request, File.class);
         byte[] content = (request.getContent() == null) ? null : Base64.decode(request.getContent());
-        return modelMapper.map(fileService.create(token.getUserDetailsAuth(), file, content), FileSummaryResponse.class);
+        return modelMapper.map(fileService.save(token.getUserDetailsAuth(), file, content), FileSummaryResponse.class);
     }
 
     @PostMapping("/upload")
@@ -62,7 +62,7 @@ public class FileController {
         request.setType(fileUp.getContentType());
         request.setName(fileUp.getOriginalFilename());
         request.setFileParentId((!fileParentId.equalsIgnoreCase("null")) ? Long.parseLong(fileParentId) : null);
-        File file = fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class), fileUp.getBytes());
+        File file = fileService.save(token.getUserDetailsAuth(), modelMapper.map(request, File.class), fileUp.getBytes());
         return modelMapper.map(file, FileSummaryResponse.class);
     }
 
@@ -70,10 +70,11 @@ public class FileController {
     public FileSummaryResponse uploadBase64(PrincipalToken token, @RequestBody FileUploadRequest fileUp) {
         FileRequest request = new FileRequest();
         byte[] file = Base64.decode(fileUp.getFile());
+        request.setId(fileUp.getId());
         request.setSize(Long.parseLong(file.length + ""));
         request.setType(fileUp.getType());
         request.setName(fileUp.getName());
-        File fileR = fileService.create(token.getUserDetailsAuth(), modelMapper.map(request, File.class), file);
+        File fileR = fileService.save(token.getUserDetailsAuth(), modelMapper.map(request, File.class), file);
         return modelMapper.map(fileR, FileSummaryResponse.class);
     }
 
@@ -87,18 +88,6 @@ public class FileController {
     })
     public void delete(PrincipalToken token, Long fileId) {
         fileService.delete(token.getUserDetailsAuth(), fileId);
-    }
-
-    @PatchMapping(value = "/")
-    @ApiOperation(value = "Update file")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Something went wrong"),
-            @ApiResponse(code = 403, message = "Access denied"),
-            @ApiResponse(code = 404, message = "The file doesn't exist"),
-            @ApiResponse(code = 500, message = "Expired or invalid JWT token")
-    })
-    public void update(PrincipalToken token, @ApiParam("Update File") @RequestBody FileRequest request) {
-        fileService.update(token.getUserDetailsAuth(), modelMapper.map(request, File.class));
     }
 
     @PatchMapping(value = "/rename")

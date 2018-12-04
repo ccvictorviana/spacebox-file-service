@@ -42,54 +42,14 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
 
     @Transactional
     @Override
-    public File create(UserDetailsAuth userDetailsAuth, File file, byte[] content) {
-        File fileParent = null;
-        boolean folderShared = false;
-
-        if (file.getFileParentId() != null) {
-            fileParent = repository.findFile(file.getFileParentId());
-            folderShared = fileParent.getUserId() != userDetailsAuth.getId();
+    public File save(UserDetailsAuth userDetailsAuth, File file, byte[] content) {
+        if (file.getId() != null) {
+            update(userDetailsAuth, file, content);
+        } else {
+            create(userDetailsAuth, file, content);
         }
 
-        if (content != null)
-            file.setFileKeyS3("");
-
-        file.setUserId((fileParent != null) ? fileParent.getUserId() : userDetailsAuth.getId());
-        validate(ValidationType.CREATE, file);
-
-        if (content != null)
-            file.setFileKeyS3(amazonS3Services.uploadFile(content, file.getType()));
-
-        repository.save(file);
-
-        if (folderShared)
-            generateNotification(ENotificationType.SHARE_CREATE, file, userDetailsAuth.getId());
-
-        generateNotification(ENotificationType.CREATE, file);
-
         return file;
-    }
-
-    @Transactional
-    @Override
-    public void update(UserDetailsAuth userDetailsAuth, File file) {
-        boolean isOwner;
-
-        File fileDb = repository.findFile(file.getId());
-        if (fileDb == null)
-            throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
-
-        hasAccess(userDetailsAuth, file.getFileParentId());
-        isOwner = file.getUserId().equals(userDetailsAuth.getId());
-
-        file.setUserId(fileDb.getUserId());
-        validate(ValidationType.UPDATE, file);
-        repository.save(file);
-
-        if (!isOwner)
-            generateNotification(ENotificationType.SHARE_UPDATE, file, userDetailsAuth.getId());
-
-        generateNotification(ENotificationType.UPDATE, file);
     }
 
     @Transactional
@@ -117,6 +77,7 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
 
         fileShareRepository.delete(fileId);
         repository.delete(fileId);
+        amazonS3Services.deleteFile(file.getFileKeyS3());
     }
 
     @Override
@@ -135,9 +96,10 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
 
     @Override
     public File detail(UserDetailsAuth userDetailsAuth, Long fileId) {
-        File file = repository.findFile(fileId, userDetailsAuth.getId());
+        FileShare filesShare = fileShareRepository.findByFileIdAndUserId(fileId, userDetailsAuth.getId());
+        File file = repository.findFile(fileId);
 
-        if (file == null)
+        if (file == null || (file.getUserId() != userDetailsAuth.getId() && filesShare == null))
             throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
 
         return file;
@@ -178,13 +140,56 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
         if (validationType == ValidationType.UPDATE) {
             FluentValidationLong.notNullAndEmpty().test(file.getId()).addMessage(getMessage(EMessage.REQUIRED_FIELD_ID), errors);
         }
+    }
 
-        if (file.getName() != null) {
-            fileDB = repository.findByNameAndFileParentIdAndUserId(file.getName(), file.getFileParentId(), file.getUserId());
-            if (fileDB != null && !fileDB.getId().equals(file.getId())) {
-                errors.add(getMessage(EMessage.ALREADYEXISTS_NAME));
-            }
+    private void create(UserDetailsAuth userDetailsAuth, File file, byte[] content) {
+        File fileParent = null;
+        boolean folderShared = false;
+
+        if (file.getFileParentId() != null) {
+            fileParent = repository.findFile(file.getFileParentId());
+            folderShared = fileParent.getUserId() != userDetailsAuth.getId();
         }
+
+        if (content != null)
+            file.setFileKeyS3("");
+
+        file.setUserId((fileParent != null) ? fileParent.getUserId() : userDetailsAuth.getId());
+        validate(ValidationType.CREATE, file);
+
+        if (content != null)
+            file.setFileKeyS3(amazonS3Services.uploadFile(content, file.getType()));
+
+        repository.save(file);
+
+        if (folderShared)
+            generateNotification(ENotificationType.SHARE_CREATE, file, userDetailsAuth.getId());
+
+        generateNotification(ENotificationType.CREATE, file);
+    }
+
+    private void update(UserDetailsAuth userDetailsAuth, File file, byte[] content) {
+        boolean isOwner;
+
+        File fileDb = repository.findFile(file.getId());
+        if (fileDb == null)
+            throw new BusinessException(getMessage(EMessage.FILE_NOT_FOUND));
+
+        hasAccess(userDetailsAuth, file.getFileParentId());
+        isOwner = file.getUserId().equals(userDetailsAuth.getId());
+
+        file.setUserId(fileDb.getUserId());
+        validate(ValidationType.UPDATE, file);
+
+        amazonS3Services.deleteFile(file.getFileKeyS3());
+        file.setFileKeyS3(amazonS3Services.uploadFile(content, file.getType()));
+
+        repository.save(file);
+
+        if (!isOwner)
+            generateNotification(ENotificationType.SHARE_UPDATE, file, userDetailsAuth.getId());
+
+        generateNotification(ENotificationType.UPDATE, file);
     }
 
     private void generateNotification(ENotificationType type, File file) {

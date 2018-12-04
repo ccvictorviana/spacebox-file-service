@@ -26,4 +26,6 @@ public interface FileShareRepository extends JpaRepository<FileShare, Long> {
     List<UserShareView> listUsers(Long userId, String userName);
 
     List<FileShare> findAllByFileId(Long fileId);
+
+    FileShare findByFileIdAndUserId(Long fileId, Long userId);
 }

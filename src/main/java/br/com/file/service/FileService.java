@@ -8,15 +8,13 @@ import br.com.spacebox.common.service.security.UserDetailsAuth;
 import java.util.List;
 
 public interface FileService {
-    File create(UserDetailsAuth userDetailsAuth, File file, byte[] content);
-
-    void update(UserDetailsAuth userDetailsAuth, File file);
-
-    List<FileView> list(UserDetailsAuth userDetailsAuth, FileFilter filter);
+    File save(UserDetailsAuth userDetailsAuth, File file, byte[] content);
 
     void delete(UserDetailsAuth userDetailsAuth, Long fileId);
 
     File detail(UserDetailsAuth userDetailsAuth, Long fileId);
 
     void rename(UserDetailsAuth userDetailsAuth, Long fileId, String name);
+
+    List<FileView> list(UserDetailsAuth userDetailsAuth, FileFilter filter);
 }

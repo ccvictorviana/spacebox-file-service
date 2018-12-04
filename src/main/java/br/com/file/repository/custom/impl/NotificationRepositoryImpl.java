@@ -26,7 +26,7 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                 " n.user_owner_id as userOwnerId," +
                 " n.user_action_id as userActionId," +
                 " n.created as nCreated," +
-                " f.id as fId," +
+                " n.file_id as fId," +
                 " f.name as fName," +
                 " f.type as fType," +
                 " f.size as fSize," +

@@ -1,19 +1,25 @@
 package br.com.file.model.request;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class FileUploadRequest {
-    @ApiModelProperty(position = 0)
-    private String File;
+    private Long id;
+    private String file;
     private String type;
     private String name;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getFile() {
-        return File;
+        return file;
     }
 
     public void setFile(String file) {
-        File = file;
+        this.file = file;
     }
 
     public String getType() {
