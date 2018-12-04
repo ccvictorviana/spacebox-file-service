@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long>, FileCustomRepository {
@@ -19,7 +20,7 @@ public interface FileRepository extends JpaRepository<File, Long>, FileCustomRep
     @Query("SELECT f FROM File f WHERE f.id = ?1 AND f.userId = ?2 AND f.fileParentId IS NULL")
     File findFile(Long id, Long userId);
 
-    File findByNameAndFileParentIdAndUserId(String name, Long fileParentId, Long userId);
+    List<File> findAllByFileParentId(Long fileParentId);
 
     @Modifying
     @Transactional

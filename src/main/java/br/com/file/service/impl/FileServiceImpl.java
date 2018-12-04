@@ -76,8 +76,13 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
         }
 
         fileShareRepository.delete(fileId);
+
         repository.delete(fileId);
-        amazonS3Services.deleteFile(file.getFileKeyS3());
+        if (file.getType() == null)
+            deleteFileFromFolder(file);
+
+        if (file.getFileKeyS3() != null)
+            amazonS3Services.deleteFile(file.getFileKeyS3());
     }
 
     @Override
@@ -210,5 +215,13 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
     }
 
     private void hasAccess(UserDetailsAuth userDetailsAuth, Long fileParentId) {
+    }
+
+    private void deleteFileFromFolder(File file) {
+        List<File> files = repository.findAllByFileParentId(file.getId());
+        for (File fileOfFolder :
+                files) {
+            repository.delete(fileOfFolder.getId());
+        }
     }
 }
