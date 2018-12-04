@@ -22,6 +22,8 @@ public interface FileRepository extends JpaRepository<File, Long>, FileCustomRep
 
     List<File> findAllByFileParentId(Long fileParentId);
 
+    File findByNameAndFileParentIdAndUserId(String name, Long fileParentId, Long userId);
+
     @Modifying
     @Transactional
     @Query("UPDATE File f SET f.name = ?3 WHERE f.id = ?1 AND f.userId = ?2")

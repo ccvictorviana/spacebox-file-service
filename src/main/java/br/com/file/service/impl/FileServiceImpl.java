@@ -142,6 +142,13 @@ public class FileServiceImpl extends AEntityService<File> implements FileService
             }
         }
 
+        if (file.getName() != null) {
+            fileDB = repository.findByNameAndFileParentIdAndUserId(file.getName(), file.getFileParentId(), file.getUserId());
+            if (fileDB != null && !fileDB.getId().equals(file.getId())) {
+                errors.add(getMessage(EMessage.ALREADYEXISTS_NAME));
+            }
+        }
+
         if (validationType == ValidationType.UPDATE) {
             FluentValidationLong.notNullAndEmpty().test(file.getId()).addMessage(getMessage(EMessage.REQUIRED_FIELD_ID), errors);
         }
